@@ -7,14 +7,41 @@ public class Account {
   private double balance;
   private String accountType;
   private String status;
+  private String pin;
 
-  public Account(String accountNumber, String name, int age, double balance, String accountType, String status) {
+  public Account(String accountNumber, String name, int age, double balance, String accountType, String status,
+      String pin) throws IllegalArgumentException {
+    if (age < 18) {
+      throw new IllegalArgumentException("Customer age must be 18 or above");
+    }
+    if (balance < 0) {
+      throw new IllegalArgumentException("Initial balance cannot be negative");
+    }
+    if (pin == null && !pin.matches("\\d{4}")) {
+      throw new IllegalArgumentException("PIN must be 4 digits");
+    }
     this.accountNumber = accountNumber;
     this.name = name;
     this.age = age;
     this.balance = balance;
     this.accountType = accountType;
     this.status = status;
+    this.pin = pin;
+  }
+
+  public boolean validatePin(String enteredPin) {
+    if (enteredPin != null && pin.equals(enteredPin)) {
+      return true;
+    }
+    return false;
+  }
+
+  public boolean changePin(String oldPin, String newPin) {
+    if (validatePin(oldPin) && (newPin != null && newPin.matches("\\d{4}"))) {
+      pin = newPin;
+      return true;
+    }
+    return false;
   }
 
   public boolean deposit(double amount) {
@@ -23,14 +50,27 @@ public class Account {
       return true;
     }
     return false;
+
   }
 
-  public boolean withdraw(double amount) {
-    if (amount > 0 && balance >= amount) {
+  public boolean withdraw(double amount, String enteredPin) {
+    if (amount > 0 && balance >= amount && validatePin(enteredPin) && status.equals("ACTIVE")) {
       balance -= amount;
       return true;
     }
     return false;
+  }
+
+  public void suspend() {
+    status = "SUSPENDED";
+  }
+
+  public void activate() {
+    status = "ACTIVE";
+  }
+
+  public void close() {
+    status = "CLOSED";
   }
 
   public void displayAccountInfo() {

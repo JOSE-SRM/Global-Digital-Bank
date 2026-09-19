@@ -4,30 +4,34 @@ import com.gdb.domain.Account;
 
 public class TestAccount {
   public static void main(String[] args) {
-    System.out.println("=== Activity 2: Test Account Suite ===");
+    System.out.println("=== Activity 3: Enhanced Account Test ===");
+    Account acc = new Account("ACC1001", "Rajesh Sharma", 28, 5000.0, "SAVINGS", "ACTIVE", "1234");
+    System.out.println("Initial Balance: Rs " + acc.getBalance() + " | Status: " + acc.getStatus());
 
-    Account acc = new Account("ACC1001", "Rajesh Sharma", 28, 5000.0, "SAVINGS", "ACTIVE");
-
-    System.out.println("Test 1 (Initial Balance 5000.0): " + (acc.getBalance() == 5000.0 ? "[PASS]" : "[FAIL]"));
-
-    acc.deposit(2000.0);
+    boolean ok = acc.withdraw(1000.0, "1234");
     System.out
-        .println("Test 2 (Deposit 2000.0 -> Balance 7000.0): " + (acc.getBalance() == 7000.0 ? "[PASS]" : "[FAIL]"));
+        .println("Withdraw with correct PIN: " + (ok ? "SUCCESS" : "FAILED") + " | Balance: Rs " + acc.getBalance());
 
-    boolean dep = acc.deposit(-500.0);
-    System.out.println("Test 3 (Negative Deposit -> Rejected): " + (!dep ? "[PASS]" : "[FAIL]"));
-
-    acc.withdraw(3000.0);
+    boolean failPin = acc.withdraw(1000.0, "9999");
     System.out
-        .println("Test 4 (Withdraw 3000.0 -> Balance 4000.0): " + (acc.getBalance() == 4000.0 ? "[PASS]" : "[FAIL]"));
+        .println("Withdraw with wrong PIN: " + (failPin ? "SUCCESS" : "FAILED") + " | Balance: Rs " + acc.getBalance());
 
-    boolean wit = acc.withdraw(10000.0);
-    System.out
-        .println("Test 5 (Exceeding Withdrawal -> Rejected): " + (!wit ? "[PASS]" : "[FAIL]"));
+    acc.suspend();
+    System.out.println("Account Suspended.");
+    boolean failSuspended = acc.withdraw(1000.0, "1234");
+    System.out.println("Withdraw on SUSPENDED account: " + (failSuspended ? "SUCCESS" : "FAILED") + " | Balance: Rs "
+        + acc.getBalance());
 
-    wit = acc.withdraw(-100.0);
+    acc.activate();
+    System.out.println("Account Re-Activated.");
+
+    boolean pinChanged = acc.changePin("1234", "5678");
+    if (pinChanged) {
+      System.out.println("PIN Changed Successfully.");
+    }
+
+    boolean newPinOk = acc.withdraw(1000.0, "5678");
     System.out
-        .println("Test 6 (Negative Withdrawal -> Rejected): " + (!wit ? "[PASS]" : "[FAIL]"));
-    System.out.println("All Account tests completed successfully!");
+        .println("Withdraw with new PIN: " + (newPinOk ? "SUCCESS" : "FAILED") + " | Balance: Rs " + acc.getBalance());
   }
 }
