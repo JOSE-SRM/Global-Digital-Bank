@@ -1,5 +1,7 @@
 package com.gdb.domain;
 
+import com.gdb.exceptions.*;
+
 public class SavingsAccount extends Account {
   private double minBalance;
   private double interestRate;
@@ -21,6 +23,15 @@ public class SavingsAccount extends Account {
     } catch (Exception e) {
       System.out.println("Could not apply interest: " + e.getMessage());
     }
+  }
+
+  @Override
+  public void withdraw(double amount, String pin) throws AccountException {
+    // Check specific minimum balance rule before passing to parent
+    if ((getBalance() - amount) < minBalance) {
+      throw new MinimumBalanceViolationException("Withdrawal violates minimum balance requirement");
+    }
+    super.withdraw(amount, pin);
   }
 
   public void setMinBalance(double min) {

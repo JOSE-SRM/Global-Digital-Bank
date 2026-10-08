@@ -1,5 +1,7 @@
 package com.gdb.domain;
 
+import com.gdb.exceptions.*;
+
 public class FixedDepositAccount extends Account {
   private int tenureMonths;
   private double interestRate;
@@ -15,6 +17,12 @@ public class FixedDepositAccount extends Account {
   public double calculateMaturityAmount() {
     // Calculates compound interest assuming annual rate applied proportionally
     return getBalance() * Math.pow(1 + (interestRate / 100), tenureMonths / 12.0);
+  }
+
+  @Override
+  public void withdraw(double amount, String pin) throws AccountException {
+    // Completely block withdrawals
+    throw new AccountException("Premature withdrawals are not permitted on Fixed Deposit accounts");
   }
 
   public void setTenureMonths(int t) {

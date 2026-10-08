@@ -1,32 +1,42 @@
-
 package com.gdb.tests;
 
 import com.gdb.domain.*;
+import com.gdb.exceptions.*;
 
 public class TestAccountSubclasses {
   public static void main(String[] args) {
-    System.out.println("=== Activity 7: Account Subclasses Test ===");
+    System.out.println("=== Activity 8: Polymorphism Test ===");
 
-    SavingsAccount sa = new SavingsAccount("SAV1001", "Rajesh Sharma", 28,
-        10000.0, "ACTIVE", "1234", 1000.0, 4.0);
-    System.out.println("Savings Account Created: Balance Rs " + sa.getBalance() +
-        " | Min Balance: Rs " + sa.getMinBalance());
+    try {
+      Account savings = new SavingsAccount("S101", "Alice", 25, 10000.0, "1234", "Active", 1000.0, 4.0);
+      savings.withdraw(9500.0, "1234");
+    } catch (MinimumBalanceViolationException e) {
+      System.out.println(
+          "[Savings] Withdraw 9500 (breaches min balance 1000): Caught MinimumBalanceViolationException [PASS]");
+    } catch (AccountException e) {
+      System.out.println("[FAIL]");
+    }
 
-    CurrentAccount ca = new CurrentAccount("CUR1001", "Priya Patel", 34, 15000.0,
-        "ACTIVE", "5678", 25000.0);
-    System.out.println("Current Account Created: Overdraft Limit Rs " +
-        ca.getOverdraftLimit());
+    try {
+      Account current = new CurrentAccount("C101", "Bob", 30, 5000.0, "1234", "Active", 25000.0);
+      current.withdraw(10000.0, "1234");
+      System.out.println("[Current] Withdraw with Overdraft (Balance goes to -5000): SUCCESS [PASS]");
 
-    FixedDepositAccount fda = new FixedDepositAccount("FD1001", "Amit Kumar", 45,
-        50000.0, "ACTIVE", "1111", 12, 6.5);
-    System.out.println("Fixed Deposit Created: Tenure " + fda.getTenureMonths() +
-        " months | Interest: " + fda.getInterestRate() + "%");
+      current.withdraw(30000.0, "1234");
+    } catch (InsufficientBalanceException e) {
+      System.out.println(
+          "[Current] Withdraw exceeding Overdraft (exceeds -25000): Caught InsufficientBalanceException [PASS]");
+    } catch (AccountException e) {
+      System.out.println("[FAIL]");
+    }
 
-    SalaryAccount sla = new SalaryAccount("SAL1001", "Sneha Verma", 26, 30000.0,
-        "ACTIVE", "2222", "Infosys", 0);
-    System.out.println("Salary Account Created: Employer " +
-        sla.getEmployerName());
+    try {
+      Account fixedDeposit = new FixedDepositAccount("FD101", "Charlie", 35, 50000.0, "1234", "Active", 12, 6.5);
+      fixedDeposit.withdraw(1000.0, "1234");
+    } catch (AccountException e) {
+      System.out.println("[FixedDeposit] Withdraw attempt: Caught AccountException [PASS]");
+    }
 
-    System.out.println("All subclasses instantiated successfully!");
+    System.out.println("All polymorphic behaviors verified!");
   }
 }

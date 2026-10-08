@@ -1,5 +1,7 @@
 package com.gdb.domain;
 
+import com.gdb.exceptions.*;
+
 public class SalaryAccount extends Account {
   private String employerName;
   private int inactiveMonths;
