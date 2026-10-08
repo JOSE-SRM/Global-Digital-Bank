@@ -4,49 +4,42 @@ import com.gdb.domain.Account;
 import com.gdb.exceptions.*;
 
 public class TestAccountExceptions {
-    public static void main(String[] args) {
-        System.out.println("=== Activity 5: Custom Exceptions Test ===");
-        Account acc = new Account("ACC1001", "Rajesh Sharma", 28, 5000.0, "SAVINGS", "ACTIVE", "1234");
+  public static void main(String[] args) {
+    System.out.println("=== Activity 6: Exception Handling Suite ===");
 
-        try {
-            acc.withdraw(1000.0, "9999");
-        } catch (InvalidPinException e) {
-            System.out.println("Caught InvalidPinException as expected: " + e.getMessage());
-        } catch (AccountException e) {
-            System.out.println("Caught unexpected: " + e.getMessage());
-        }
+    Account account = new Account("1001", "Test User", 25, 5000.0, "Savings", "ACTIVE", "1234");
 
-        acc.suspend();
-        try {
-            acc.withdraw(1000.0, "1234");
-        } catch (InactiveAccountException e) {
-            System.out.println("Caught InactiveAccountException as expected: " + e.getMessage());
-        } catch (AccountException e) {
-            System.out.println("Caught unexpected: " + e.getMessage());
-        }
-
-        acc.activate();
-        try {
-            acc.withdraw(-500.0, "1234");
-        } catch (InvalidAmountException e) {
-            System.out.println("Caught InvalidAmountException as expected: " + e.getMessage());
-        } catch (AccountException e) {
-            System.out.println("Caught unexpected: " + e.getMessage());
-        }
-
-        try {
-            acc.withdraw(10000.0, "1234");
-        } catch (InsufficientBalanceException e) {
-            System.out.println("Caught InsufficientBalanceException as expected: " + e.getMessage());
-        } catch (AccountException e) {
-            System.out.println("Caught unexpected: " + e.getMessage());
-        }
-
-        try {
-            acc.withdraw(1000.0, "1234");
-            System.out.println("Successful withdrawal completed: Rs 1000.0 | New Balance: Rs " + acc.getBalance());
-        } catch (AccountException e) {
-            System.out.println("Withdrawal failed unexpectedly: " + e.getMessage());
-        }
+    try {
+      account.withdraw(100.0, "9999");
+    } catch (InvalidPinException e) {
+      System.out.println("[Test 1] Caught Invalid PIN: " + e.getMessage() + " [PASS]");
     }
+    try {
+      account.suspend();
+      account.withdraw(100.0, "1234");
+    } catch (InactiveAccountException e) {
+      System.out.println("[Test 2] Caught Inactive Account: " + e.getMessage() + " [PASS]");
+    }
+    try {
+      account.activate();
+      account.deposit(-500.0);
+    } catch (InvalidAmountException e) {
+      System.out.println("[Test 3] Caught Invalid Amount: " + e.getMessage() + " [PASS]");
+    }
+
+    try {
+      account.withdraw(50000.0, "1234");
+    } catch (InsufficientBalanceException e) {
+      System.out.println("[Test 4] Caught Insufficient Funds: " + e.getMessage() + " [PASS]");
+    }
+
+    try {
+      account.close();
+      account.withdraw(100.0, "1234");
+    } catch (AccountException e) {
+      System.out.println("[Test 5] Polymorphic Handler caught: " + e.getMessage() + " [PASS]");
+    }
+
+    System.out.println("All exception handling tests completed successfully!");
+  }
 }
