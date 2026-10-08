@@ -11,8 +11,8 @@ public class Account {
   private String status;
   private String pin;
 
-  public Account(String accountNumber, String name, int age, double balance, String accountType, String status,
-      String pin) throws IllegalArgumentException {
+  public Account(String accountNumber, String name, int age, double balance, String pin, String status,
+      String accountType) throws IllegalArgumentException {
     if (age < 18) {
       throw new IllegalArgumentException("Customer age must be 18 or above");
     }
