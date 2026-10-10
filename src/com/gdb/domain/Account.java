@@ -1,5 +1,6 @@
 package com.gdb.domain;
 
+import com.gdb.domain.AbstractAccount;
 import com.gdb.exceptions.*;
 
 public class Account {
