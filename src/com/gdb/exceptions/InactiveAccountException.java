@@ -1,9 +1,17 @@
 package com.gdb.exceptions;
 
-// TODO: Step 2 - Thrown when an operation is attempted on a suspended or closed account.
-//   Add a public constructor that takes a String message and passes it to AccountException with super(message).
+/**
+ * Domain exception thrown when financial operations are attempted on a closed or inactive account.
+ */
 public class InactiveAccountException extends AccountException {
-  public InactiveAccountException(String message) {
-    super(message);
-  }
+
+    /**
+     * Constructs an InactiveAccountException detailing account inactive status state.
+     *
+     * @param message Detailed diagnostic string explaining inactive account status.
+     */
+    public InactiveAccountException(String message) {
+        // Forward diagnostic detail message to AccountException parent class
+        super(message);
+    }
 }

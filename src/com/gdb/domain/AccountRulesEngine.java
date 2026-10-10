@@ -146,10 +146,12 @@ public class AccountRulesEngine {
         return rule.getAdditionalFeatures().get(key);
     }
     
-// STEP 8
     public double getDailyTransferLimit(String accountType, int tenureYears) {
-        Double limit = (Double) getAdditionalFeature(accountType, tenureYears, "dailyTransferLimit");
-        return limit == null ? 0.0 : limit;
+        Object limit = getAdditionalFeature(accountType, tenureYears, "dailyTransferLimit");
+        if (limit instanceof Double) {
+            return (Double) limit;
+        }
+        return 0.0;
     }
 
     public boolean hasAccountType(String accountType) {

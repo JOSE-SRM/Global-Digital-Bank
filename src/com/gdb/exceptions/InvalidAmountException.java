@@ -1,9 +1,17 @@
 package com.gdb.exceptions;
 
-// TODO: Step 2 - Thrown when a deposit or withdrawal amount is zero or negative.
-//   Add a public constructor that takes a String message and passes it to AccountException with super(message).
+/**
+ * Domain exception thrown when a non-positive monetary amount (zero or negative) is supplied to a transaction.
+ */
 public class InvalidAmountException extends AccountException {
-  public InvalidAmountException(String message) {
-    super(message);
-  }
+
+    /**
+     * Constructs an InvalidAmountException detailing the invalid monetary input amount.
+     *
+     * @param message Detailed diagnostic string specifying the invalid numeric amount.
+     */
+    public InvalidAmountException(String message) {
+        // Forward diagnostic detail message to AccountException parent class
+        super(message);
+    }
 }

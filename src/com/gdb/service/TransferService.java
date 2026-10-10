@@ -1,40 +1,55 @@
 package com.gdb.service;
 
-import com.gdb.domain.Account;
-import com.gdb.domain.IAccount;
+import com.gdb.domain.*;
 import com.gdb.exceptions.*;
 
 public class TransferService {
 
-    public static void transfer(IAccount from, IAccount to, double amount, int pin) throws AccountException {
+    public TransferService() {
+    }
+
+    public static void transfer(IAccount from, IAccount to, double amount, int pin)
+            throws AccountException {
         if (from == null || to == null) {
             throw new AccountException("Source and destination accounts are required");
         }
+        if (!from.isActive() || !to.isActive()) {
+            throw new InactiveAccountException("Both accounts must be active to transfer funds");
+        }
+        if (!from.verifyPin(pin)) {
+            throw new InvalidPinException("Incorrect PIN");
+        }
+        if (!from.canWithdraw(amount)) {
+            throw new InsufficientBalanceException("Insufficient balance for transfer of Rs. " + amount);
+        }
+        Account source = (Account) from;
+        source.resetDailyTransferIfNeeded();
+        if (!source.canTransfer(amount)) {
+            throw new AccountException("Daily transfer limit exceeded. Remaining today: Rs. " + source.getRemainingDailyTransferLimit());
+        }
+        from.withdraw(amount, pin);
+        to.deposit(amount);
+        source.updateDailyTransferTotal(amount);
+    }
+
+// STEP 9
+    public static Transaction transferWithTransaction(IAccount from, IAccount to, double amount, int pin) throws AccountException {
+        transfer(from, to, amount, pin);
         
         Account source = (Account) from;
         Account dest = (Account) to;
         
-        if (!source.isActive() || !dest.isActive()) {
-            throw new InactiveAccountException("Both accounts must be active to transfer funds");
-        }
-        
-        if (!source.verifyPin(pin)) {
-            throw new InvalidPinException("Incorrect PIN");
-        }
-        
-        if (!source.canWithdraw(amount)) {
-            throw new InsufficientBalanceException("Insufficient balance for transfer of Rs. " + amount);
-        }
-        
-        source.resetDailyTransferIfNeeded();
-        
-        if (!source.canTransfer(amount)) {
-            double remaining = source.getRemainingDailyTransferLimit();
-            throw new AccountException("Daily transfer limit exceeded. Remaining today: Rs. " + remaining);
-        }
-        
-        source.withdraw(amount, pin);
-        dest.deposit(amount);
-        source.updateDailyTransferTotal(amount);
+        return new Transaction(
+            Transaction.generateId(),
+            java.time.LocalDateTime.now(),
+            source.getAccountNumber(),
+            TransactionType.TRANSFER,
+            amount,
+            source.getBalance(),
+            "SUCCESS",
+            "Transfer of Rs. " + amount + " to Account #" + dest.getAccountNumber(),
+            source.getAccountNumber(),
+            dest.getAccountNumber()
+        );
     }
 }

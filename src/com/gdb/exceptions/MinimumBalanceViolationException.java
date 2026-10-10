@@ -1,9 +1,17 @@
 package com.gdb.exceptions;
 
-// TODO: Step 2 - Thrown when a withdrawal would breach the minimum balance requirement.
-//   Add a public constructor that takes a String message and passes it to AccountException with super(message).
+/**
+ * Domain exception thrown when a transaction would cause balance to fall below required minimum limits.
+ */
 public class MinimumBalanceViolationException extends AccountException {
-  public MinimumBalanceViolationException(String message) {
-    super(message);
-  }
+
+    /**
+     * Constructs a MinimumBalanceViolationException detailing the minimum balance rule violated.
+     *
+     * @param message Detailed diagnostic string explaining post-transaction balance failure.
+     */
+    public MinimumBalanceViolationException(String message) {
+        // Forward diagnostic detail message to AccountException parent class
+        super(message);
+    }
 }
