@@ -3,14 +3,16 @@ package com.gdb.domain;
 import com.gdb.exceptions.*;
 
 public class SavingsAccount extends AbstractAccount {
+  private int tenureYears;
   private double minBalance;
   private double interestRate;
 
   public SavingsAccount(String accountNumber, String name, int age, double balance, String status, String pin,
-      double minBalance, double interestRate) {
+      int tenureYears) {
     super(accountNumber, name, age, balance, "SAVINGS", status, pin);
-    this.minBalance = minBalance;
-    this.interestRate = interestRate;
+    this.tenureYears = tenureYears;
+    this.minBalance = AccountRulesEngine.getSavingsMinBalance(tenureYears);
+    this.interestRate = AccountRulesEngine.getSavingsInterestRate(tenureYears);
   }
 
   @Override
@@ -28,6 +30,14 @@ public class SavingsAccount extends AbstractAccount {
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }
+  }
+
+  public int getTenureYears() {
+    return tenureYears;
+  }
+
+  public void setTenureYears(int tenureYears) {
+    this.tenureYears = tenureYears;
   }
 
   public double getMinBalance() {
