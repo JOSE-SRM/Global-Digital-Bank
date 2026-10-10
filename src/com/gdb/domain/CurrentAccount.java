@@ -7,7 +7,7 @@ public class CurrentAccount extends AbstractAccount {
 
   public CurrentAccount(String accountNumber, String name, int age, double balance, String status, String pin,
       double overdraftLimit) {
-    super(accountNumber, name, age, balance, pin, status, "CURRENT");
+    super(accountNumber, name, age, balance, "CURRENT", status, pin);
     this.overdraftLimit = overdraftLimit;
   }
 

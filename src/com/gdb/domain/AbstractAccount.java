@@ -7,12 +7,12 @@ public abstract class AbstractAccount implements IAccount {
   protected String name;
   protected int age;
   protected double balance;
-  protected String pin;
-  protected String status;
   protected String accountType;
+  protected String status;
+  protected String pin;
 
-  public AbstractAccount(String accountNumber, String name, int age, double balance, String status,
-      String pin, String accountType) {
+  public AbstractAccount(String accountNumber, String name, int age, double balance, String accountType, String status,
+      String pin) {
     this.accountNumber = accountNumber;
     this.name = name;
     this.age = age;
@@ -22,11 +22,15 @@ public abstract class AbstractAccount implements IAccount {
     this.pin = pin;
   }
 
+  public final double withdraw(double amount) throws AccountException {
+    return withdraw(amount, this.pin);
+  }
+
   public final double withdraw(double amount, String pinInput) throws AccountException {
     if (!validatePin(pinInput)) {
       throw new InvalidPinException("Invalid PIN entered");
     }
-    if (this.status != null && !this.status.equalsIgnoreCase("ACTIVE")) {
+    if (this.status != null && !this.status.equalsIgnoreCase("Active")) {
       throw new InactiveAccountException("Account is not active");
     }
     if (amount <= 0) {
@@ -40,7 +44,7 @@ public abstract class AbstractAccount implements IAccount {
     if (amount <= 0) {
       throw new InvalidAmountException("Deposit amount must be positive");
     }
-    if (this.status != null && !this.status.equalsIgnoreCase("ACTIVE")) {
+    if (this.status != null && !this.status.equalsIgnoreCase("Active")) {
       throw new InactiveAccountException("Account is not active");
     }
     balance += amount;
@@ -97,12 +101,12 @@ public abstract class AbstractAccount implements IAccount {
     this.balance = balance;
   }
 
-  public String getPin() {
-    return pin;
+  public String getAccountType() {
+    return accountType;
   }
 
-  public void setPin(String pin) {
-    this.pin = pin;
+  public void setAccountType(String accountType) {
+    this.accountType = accountType;
   }
 
   public String getStatus() {
@@ -113,11 +117,11 @@ public abstract class AbstractAccount implements IAccount {
     this.status = status;
   }
 
-  public String getAccountType() {
-    return accountType;
+  public String getPin() {
+    return pin;
   }
 
-  public void setAccountType(String accountType) {
-    this.accountType = accountType;
+  public void setPin(String pin) {
+    this.pin = pin;
   }
 }

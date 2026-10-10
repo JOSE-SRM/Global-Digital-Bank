@@ -8,7 +8,7 @@ public class SavingsAccount extends AbstractAccount {
 
   public SavingsAccount(String accountNumber, String name, int age, double balance, String status, String pin,
       double minBalance, double interestRate) {
-    super(accountNumber, name, age, balance, pin, status, "SAVINGS");
+    super(accountNumber, name, age, balance, "SAVINGS", status, pin);
     this.minBalance = minBalance;
     this.interestRate = interestRate;
   }
@@ -26,7 +26,7 @@ public class SavingsAccount extends AbstractAccount {
       double interestAmount = balance * (interestRate / 100);
       deposit(interestAmount);
     } catch (Exception e) {
-      System.out.println("Could not apply interest: " + e.getMessage());
+      System.out.println(e.getMessage());
     }
   }
 
