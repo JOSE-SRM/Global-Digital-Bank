@@ -11,16 +11,6 @@ public class CurrentAccount extends AbstractAccount {
     this.overdraftLimit = overdraftLimit;
   }
 
-  public CurrentAccount(String accountNumber, String name, double balance, double overdraftLimit) {
-    super(accountNumber, name, balance, "CURRENT");
-    this.overdraftLimit = overdraftLimit;
-  }
-
-  public CurrentAccount(String accountNumber, String name, int age, double balance, double overdraftLimit) {
-    super(accountNumber, name, age, balance, "CURRENT");
-    this.overdraftLimit = overdraftLimit;
-  }
-
   @Override
   public void processDebit(double amount) throws AccountException {
     if (amount > (balance + overdraftLimit)) {

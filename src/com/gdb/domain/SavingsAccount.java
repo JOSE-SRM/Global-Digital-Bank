@@ -13,19 +13,6 @@ public class SavingsAccount extends AbstractAccount {
     this.interestRate = interestRate;
   }
 
-  public SavingsAccount(String accountNumber, String name, double balance, double minBalance, double interestRate) {
-    super(accountNumber, name, balance, "SAVINGS");
-    this.minBalance = minBalance;
-    this.interestRate = interestRate;
-  }
-
-  public SavingsAccount(String accountNumber, String name, int age, double balance, double minBalance,
-      double interestRate) {
-    super(accountNumber, name, age, balance, "SAVINGS");
-    this.minBalance = minBalance;
-    this.interestRate = interestRate;
-  }
-
   @Override
   public void processDebit(double amount) throws AccountException {
     if ((balance - amount) < minBalance) {

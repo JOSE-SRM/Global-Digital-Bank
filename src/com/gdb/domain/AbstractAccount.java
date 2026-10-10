@@ -18,7 +18,7 @@ public abstract class AbstractAccount {
     this.age = age;
     this.balance = balance;
     this.pin = pin != null ? pin : "1234";
-    this.status = status != null ? status : "Active";
+    this.status = status != null ? status : "ACTIVE";
     this.accountType = accountType;
   }
 

@@ -13,19 +13,6 @@ public class FixedDepositAccount extends AbstractAccount {
     this.interestRate = interestRate;
   }
 
-  public FixedDepositAccount(String accountNumber, String name, double balance, int tenureMonths, double interestRate) {
-    super(accountNumber, name, balance, "FIXED_DEPOSIT");
-    this.tenureMonths = tenureMonths;
-    this.interestRate = interestRate;
-  }
-
-  public FixedDepositAccount(String accountNumber, String name, int age, double balance, int tenureMonths,
-      double interestRate) {
-    super(accountNumber, name, age, balance, "FIXED_DEPOSIT");
-    this.tenureMonths = tenureMonths;
-    this.interestRate = interestRate;
-  }
-
   @Override
   public void processDebit(double amount) throws AccountException {
     throw new AccountException("Premature withdrawals are not permitted on Fixed Deposit accounts");
