@@ -6,7 +6,7 @@ public class SavingsAccount extends AbstractAccount {
   private double minBalance;
   private double interestRate;
 
-  public SavingsAccount(String accountNumber, String name, int age, double balance, String pin, String status,
+  public SavingsAccount(String accountNumber, String name, int age, double balance, String status, String pin,
       double minBalance, double interestRate) {
     super(accountNumber, name, age, balance, pin, status, "SAVINGS");
     this.minBalance = minBalance;

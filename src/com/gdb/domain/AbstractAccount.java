@@ -2,7 +2,7 @@ package com.gdb.domain;
 
 import com.gdb.exceptions.*;
 
-public abstract class AbstractAccount {
+public abstract class AbstractAccount implements IAccount {
   protected String accountNumber;
   protected String name;
   protected int age;
@@ -11,34 +11,22 @@ public abstract class AbstractAccount {
   protected String status;
   protected String accountType;
 
-  public AbstractAccount(String accountNumber, String name, int age, double balance, String status, String pin,
-      String accountType) {
+  public AbstractAccount(String accountNumber, String name, int age, double balance, String status,
+      String pin, String accountType) {
     this.accountNumber = accountNumber;
     this.name = name;
     this.age = age;
     this.balance = balance;
-    this.pin = pin != null ? pin : "1234";
-    this.status = status != null ? status : "ACTIVE";
     this.accountType = accountType;
-  }
-
-  public AbstractAccount(String accountNumber, String name, double balance, String accountType) {
-    this(accountNumber, name, 25, balance, "ACTIVE", "1234", accountType);
-  }
-
-  public AbstractAccount(String accountNumber, String name, int age, double balance, String accountType) {
-    this(accountNumber, name, age, balance, "ACTIVE", "1234", accountType);
-  }
-
-  public final double withdraw(double amount) throws AccountException {
-    return withdraw(amount, this.pin);
+    this.status = status;
+    this.pin = pin;
   }
 
   public final double withdraw(double amount, String pinInput) throws AccountException {
     if (!validatePin(pinInput)) {
       throw new InvalidPinException("Invalid PIN entered");
     }
-    if (this.status != null && !this.status.equalsIgnoreCase("Active")) {
+    if (this.status != null && !this.status.equalsIgnoreCase("ACTIVE")) {
       throw new InactiveAccountException("Account is not active");
     }
     if (amount <= 0) {
@@ -52,7 +40,7 @@ public abstract class AbstractAccount {
     if (amount <= 0) {
       throw new InvalidAmountException("Deposit amount must be positive");
     }
-    if (this.status != null && !this.status.equalsIgnoreCase("Active")) {
+    if (this.status != null && !this.status.equalsIgnoreCase("ACTIVE")) {
       throw new InactiveAccountException("Account is not active");
     }
     balance += amount;

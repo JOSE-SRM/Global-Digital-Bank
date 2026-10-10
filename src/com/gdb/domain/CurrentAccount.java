@@ -5,7 +5,7 @@ import com.gdb.exceptions.*;
 public class CurrentAccount extends AbstractAccount {
   private double overdraftLimit;
 
-  public CurrentAccount(String accountNumber, String name, int age, double balance, String pin, String status,
+  public CurrentAccount(String accountNumber, String name, int age, double balance, String status, String pin,
       double overdraftLimit) {
     super(accountNumber, name, age, balance, pin, status, "CURRENT");
     this.overdraftLimit = overdraftLimit;

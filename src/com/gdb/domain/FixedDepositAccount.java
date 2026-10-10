@@ -6,7 +6,7 @@ public class FixedDepositAccount extends AbstractAccount {
   private int tenureMonths;
   private double interestRate;
 
-  public FixedDepositAccount(String accountNumber, String name, int age, double balance, String pin, String status,
+  public FixedDepositAccount(String accountNumber, String name, int age, double balance, String status, String pin,
       int tenureMonths, double interestRate) {
     super(accountNumber, name, age, balance, pin, status, "FIXED_DEPOSIT");
     this.tenureMonths = tenureMonths;
