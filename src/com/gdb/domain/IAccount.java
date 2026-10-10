@@ -1,21 +1,48 @@
 package com.gdb.domain;
 
-import com.gdb.exceptions.AccountException;
+import com.gdb.exceptions.*;
 
+/**
+ * Enterprise Interface Contract defining standard public capabilities for all bank account implementations.
+ * Integrates dynamic rules engine lookup based on customer account tenure.
+ */
 public interface IAccount {
-  String getAccountNumber();
 
-  String getName();
+    void deposit(double amount) throws InactiveAccountException, InvalidAmountException;
 
-  double getBalance();
+    void withdraw(double amount, int pin) throws InactiveAccountException, InvalidPinException, InvalidAmountException, InsufficientBalanceException;
 
-  String getAccountType();
+    double getBalance();
 
-  String getStatus();
+    int getAccountNumber();
 
-  void deposit(double amount) throws AccountException;
+    String getAccountHolderName();
 
-  double withdraw(double amount, String pin) throws AccountException;
+    String getAccountType();
 
-  void displayAccountInfo();
+    String getOpeningDate();
+
+    boolean isActive();
+
+    double getMinimumBalance();
+
+    double getInterestRate();
+
+    boolean canWithdraw(double amount);
+
+    void setPin(int pin) throws InvalidPinException;
+
+    boolean verifyPin(int pin);
+
+    boolean hasPin();
+
+    void closeAccount() throws InactiveAccountException;
+
+    void reopenAccount() throws InactiveAccountException;
+
+    String getAccountInfo();
+
+    int getTenureYears();
+
+    void setTenureYears(int tenureYears);
 }

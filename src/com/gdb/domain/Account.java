@@ -1,139 +1,161 @@
 package com.gdb.domain;
 
-import com.gdb.domain.AbstractAccount;
 import com.gdb.exceptions.*;
+import java.time.LocalDateTime;
 
-public class Account {
-  private String accountNumber;
-  private String name;
-  private int age;
-  private double balance;
-  private String accountType;
-  private String status;
-  private String pin;
+/**
+ * Abstract class Account implementing default behavior for IAccount interface.
+ * Encapsulates common state fields, customer tenure, and default validation routines.
+ */
+public abstract class Account implements IAccount {
+    protected int accountNumber;
+    protected String accountHolderName;
+    protected int age;
+    protected double balance;
+    protected String status;
+    protected Integer pin;
+    protected String openingDate;
+    protected int tenureYears;
 
-  public Account(String accountNumber, String name, int age, double balance, String pin, String status,
-      String accountType) throws IllegalArgumentException {
-    if (age < 18) {
-      throw new IllegalArgumentException("Customer age must be 18 or above");
+    // ============================================================
+    // 📝 STEP 2.1: Daily Transfer Tracking Fields
+    //
+    // INSTRUCTIONS:
+    //   1. dailyTransferTotal holds the sum of all transfers sent today (starts at 0.0).
+    //   2. lastTransferDate records when that total was last updated (starts at now).
+    //
+    // HINT: These are declared for you because the getters below need them to compile; Steps 4-7 read and update them.
+    // ============================================================
+    // TODO: study these two fields — every daily-limit method in Steps 4-7 works with them
+    protected double dailyTransferTotal = 0.0;
+    protected LocalDateTime lastTransferDate = LocalDateTime.now();
+
+    public Account(int accountNumber, String name, int age, double initialBalance) throws InvalidAgeException {
+        this(accountNumber, name, age, initialBalance, 0);
     }
-    if (balance < 0) {
-      throw new IllegalArgumentException("Initial balance cannot be negative");
+
+    public Account(int accountNumber, String name, int age, double initialBalance, int tenureYears) throws InvalidAgeException {
+        if (age < 18) {
+            throw new InvalidAgeException("Customer must be at least 18 years old. Provided: " + age);
+        }
+        if (name == null || name.trim().isEmpty()) {
+            throw new InvalidAgeException("Name cannot be empty");
+        }
+
+        this.accountNumber = accountNumber;
+        this.accountHolderName = name;
+        this.age = age;
+        this.balance = initialBalance;
+        this.status = "Active";
+        this.pin = null;
+        this.openingDate = "2026-08-28";
+        this.tenureYears = Math.max(0, tenureYears);
     }
-    if (pin == null && !pin.matches("\\d{4}")) {
-      throw new IllegalArgumentException("PIN must be 4 digits");
+
+    @Override
+    public void deposit(double amount) throws InactiveAccountException, InvalidAmountException {
+        if (!"Active".equals(status)) {
+            throw new InactiveAccountException("Account is inactive.");
+        }
+        if (amount <= 0) {
+            throw new InvalidAmountException("Deposit amount must be positive. Provided: Rs. " + amount);
+        }
+        balance += amount;
     }
-    this.accountNumber = accountNumber;
-    this.name = name;
-    this.age = age;
-    this.balance = balance;
-    this.accountType = accountType;
-    this.status = status;
-    this.pin = pin;
-  }
 
-  public boolean validatePin(String enteredPin) {
-    if (enteredPin != null && pin.equals(enteredPin)) {
-      return true;
+    @Override
+    public void withdraw(double amount, int pin) throws InactiveAccountException, InvalidPinException, InvalidAmountException, InsufficientBalanceException {
+        if (!"Active".equals(status)) {
+            throw new InactiveAccountException("Account is inactive.");
+        }
+        if (this.pin == null) {
+            throw new InvalidPinException("PIN not set for this account");
+        }
+        if (this.pin != pin) {
+            throw new InvalidPinException("Incorrect PIN");
+        }
+        if (amount <= 0) {
+            throw new InvalidAmountException("Amount must be positive. Provided: Rs. " + amount);
+        }
+        if (!canWithdraw(amount)) {
+            throw new InsufficientBalanceException("Withdrawal not allowed");
+        }
+        balance -= amount;
     }
-    return false;
-  }
 
-  public boolean changePin(String oldPin, String newPin) {
-    if (validatePin(oldPin) && (newPin != null && newPin.matches("\\d{4}"))) {
-      pin = newPin;
-      return true;
+    @Override
+    public void closeAccount() throws InactiveAccountException {
+        if (!"Active".equals(status)) {
+            throw new InactiveAccountException("Account is already closed / inactive.");
+        }
+        status = "Inactive";
     }
-    return false;
-  }
 
-  public void deposit(double amount) throws InvalidAmountException {
-    if (amount <= 0) {
-      throw new InvalidAmountException("Deposit amount must be positive");
+    @Override
+    public void reopenAccount() throws InactiveAccountException {
+        if ("Active".equals(status)) {
+            throw new InactiveAccountException("Account is already active.");
+        }
+        status = "Active";
     }
-    balance += amount;
-  }
 
-  public void withdraw(double amount, String enteredPin) throws AccountException {
-    if (!validatePin(enteredPin)) {
-      throw new InvalidPinException("Invalid PIN entered");
-    } else if (status != "ACTIVE") {
-      throw new InactiveAccountException("Account is not active");
-    } else if (amount <= 0) {
-      throw new InvalidAmountException("Withdrawal amount must be positive");
-    } else if (amount > balance) {
-      throw new InsufficientBalanceException("Insufficient funds in account");
+    @Override
+    public void setPin(int pin) throws InvalidPinException {
+        if (pin < 1000 || pin > 9999) {
+            throw new InvalidPinException("PIN must be a 4-digit number (1000-9999). Provided: " + pin);
+        }
+        this.pin = pin;
     }
-    balance -= amount;
-  }
 
-  public void suspend() {
-    status = "SUSPENDED";
-  }
+    @Override public boolean verifyPin(int pin) { return this.pin != null && this.pin == pin; }
+    @Override public boolean hasPin() { return pin != null; }
+    @Override public boolean isActive() { return "Active".equals(status); }
 
-  public void activate() {
-    status = "ACTIVE";
-  }
+    @Override
+    public String getAccountInfo() {
+        return "Account #" + accountNumber + " | " + accountHolderName + " (" + age + " yrs, Tenure: " + tenureYears + " yrs) | " +
+               getAccountType() + " | Rs. " + balance + " | " + status;
+    }
 
-  public void close() {
-    status = "CLOSED";
-  }
+    @Override public int getAccountNumber() { return accountNumber; }
+    @Override public String getAccountHolderName() { return accountHolderName; }
+    @Override public double getBalance() { return balance; }
+    @Override public String getOpeningDate() { return openingDate; }
+    @Override public int getTenureYears() { return tenureYears; }
+    @Override public void setTenureYears(int tenureYears) { this.tenureYears = Math.max(0, tenureYears); }
 
-  public void displayAccountInfo() {
-    System.out.println("Account Number: " + accountNumber);
-    System.out.println("Name: " + name);
-    System.out.println("Age: " + age);
-    System.out.println("Balance: Rs " + balance);
-    System.out.println("Account Type: " + accountType);
-    System.out.println("Status: " + status);
-  }
+// STEP 3
+    public double getDailyTransferLimit() {
+        return AccountRulesEngine.getInstance().getDailyTransferLimit(getAccountType(), getTenureYears());
+    }
 
-  // INFO: Getters and Setters
-  public String getAccountNumber() {
-    return accountNumber;
-  }
+    // STEP 4
+    public double getRemainingDailyTransferLimit() {
+        resetDailyTransferIfNeeded();
+        return Math.max(0.0, getDailyTransferLimit() - dailyTransferTotal);
+    }
 
-  public String getName() {
-    return name;
-  }
+    // STEP 5
+    public boolean canTransfer(double amount) {
+        resetDailyTransferIfNeeded();
+        return (dailyTransferTotal + amount) <= getDailyTransferLimit();
+    }
 
-  public int getAge() {
-    return age;
-  }
+    // STEP 6
+    public void updateDailyTransferTotal(double amount) {
+        resetDailyTransferIfNeeded();
+        dailyTransferTotal += amount;
+        lastTransferDate = java.time.LocalDateTime.now();
+    }
 
-  public double getBalance() {
-    return balance;
-  }
+    // STEP 7
+    public void resetDailyTransferIfNeeded() {
+        if (lastTransferDate == null || !lastTransferDate.toLocalDate().equals(java.time.LocalDate.now())) {
+            dailyTransferTotal = 0.0;
+            lastTransferDate = java.time.LocalDateTime.now();
+        }
+    }
 
-  public String getAccountType() {
-    return accountType;
-  }
-
-  public String getStatus() {
-    return status;
-  }
-
-  public void setAccountNumber(String accountNumber) {
-    this.accountNumber = accountNumber;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public void setAge(int age) {
-    this.age = age;
-  }
-
-  public void setBalance(double balance) {
-    this.balance = balance;
-  }
-
-  public void setAccountType(String accountType) {
-    this.accountType = accountType;
-  }
-
-  public void setStatus(String status) {
-    this.status = status;
-  }
+    public double getDailyTransferTotal() { return dailyTransferTotal; }
+    public LocalDateTime getLastTransferDate() { return lastTransferDate; }
 }
